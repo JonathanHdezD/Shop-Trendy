@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -8,29 +8,30 @@ import Header from './components/Header';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import CartDrawer from './components/CartDrawer';
+import AdminLogin from './components/AdminLogin';
+import AboutUs from './pages/AboutUs';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminProducts from './pages/AdminProducts';
+import AdminUsers from './pages/AdminUsers';
+import AdminOrders from './pages/AdminOrders';
 import './index.css';
 
-import AdminLogin from './components/AdminLogin'; //Anexado para la ruta del administrador
-import AboutUs from './pages/AboutUs'; //Anexado para la ruta de Nosotros
-import AdminDashboard from './pages/AdminDashboard'; //Anexado para la ruta del dashboard del administrador
+function AppContent() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
 
-function App() {
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
 
-  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false); //Anexado para el estado del modal de administrador
-
-  // Cart Management
   const addToCart = (product) => {
     setCart(prevCart => {
-      // Check if product with same ID and size exists
       const existingItemIndex = prevCart.findIndex(item => 
         item.id === product.id && item.size === product.size
       );
-
       if (existingItemIndex >= 0) {
         const newCart = [...prevCart];
         newCart[existingItemIndex].quantity += (product.quantity || 1);
@@ -39,7 +40,7 @@ function App() {
         return [...prevCart, { ...product, quantity: product.quantity || 1, cartId: Date.now().toString() }];
       }
     });
-    setIsCartOpen(true); // Open drawer on add
+    setIsCartOpen(true);
   };
 
   const updateQuantity = (cartId, newQuantity) => {
@@ -55,7 +56,6 @@ function App() {
 
   const clearCart = () => setCart([]);
 
-  // Calculate total items in cart (sum of quantities)
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleUserIconClick = () => {
@@ -67,62 +67,61 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="app-container">
-
-        <Routes>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        </Routes>
-
+    <div className="app-container">
+      {!isAdmin && (
         <Header 
           cartCount={cartItemsCount} 
           onUserIconClick={handleUserIconClick}
           onCartClick={() => setIsCartOpen(true)}
         />
-        
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/shop" element={<ShopPage cart={cart} addToCart={addToCart} />} />
-          <Route path="/product/:id" element={<ProductDetailPage cart={cart} addToCart={addToCart} />} />
-          
-          <Route path="/about" element={<AboutUs />} /> {/* Anexado para la ruta de Nosotros */}
-          
-          {/*
-          <Route path="/admin/dashboard" element={<AdminDashboard />} /> {/*Anexado para la ruta del dashboard del administrador
-          <Route path="/admin" element={<AdminLogin />} /> //Anexado para la ruta del administrador
-          */}
+      )}
+      
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/shop" element={<ShopPage cart={cart} addToCart={addToCart} />} />
+        <Route path="/product/:id" element={<ProductDetailPage cart={cart} addToCart={addToCart} />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/productos" element={<AdminProducts />} />
+        <Route path="/admin/pedidos" element={<AdminOrders />} />
+        <Route path="/admin/usuarios" element={<AdminUsers />} />
+      </Routes>
 
-        </Routes>
-        
+      {!isAdmin && (
         <Footer onAdminClick={() => setIsAdminLoginOpen(true)} />
+      )}
 
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
-          onLogin={(userData) => setUser(userData)} 
-        />
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onLogin={(userData) => setUser(userData)} 
+      />
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+        user={user} 
+        onLogout={() => setUser(null)} 
+      />
+      <CartDrawer 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+        clearCart={clearCart}
+      />
+      <AdminLogin
+        isOpen={isAdminLoginOpen}
+        onClose={() => setIsAdminLoginOpen(false)}
+      />
+    </div>
+  );
+}
 
-        <ProfileModal 
-          isOpen={isProfileModalOpen} 
-          onClose={() => setIsProfileModalOpen(false)} 
-          user={user} 
-          onLogout={() => setUser(null)} 
-        />
-
-        <CartDrawer 
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          cart={cart}
-          updateQuantity={updateQuantity}
-          removeFromCart={removeFromCart}
-          clearCart={clearCart}
-        />
-
-        <AdminLogin
-          isOpen={isAdminLoginOpen}
-          onClose={() => setIsAdminLoginOpen(false)}
-        />
-      </div>
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
