@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -8,28 +8,30 @@ import Header from './components/Header';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import CartDrawer from './components/CartDrawer';
-import AdminPage from './pages/AdminPage';
-import AdminAuthModal from './components/AdminAuthModal';
-import { products as initialProducts } from './data/products';
+import AdminLogin from './components/AdminLogin';
+import AboutUs from './pages/AboutUs';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminProducts from './pages/AdminProducts';
+import AdminUsers from './pages/AdminUsers';
+import AdminOrders from './pages/AdminOrders';
 import './index.css';
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState(false);
-  const [products, setProducts] = useState(initialProducts);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
 
-  // Cart Management
   const addToCart = (product) => {
     setCart(prevCart => {
-      // Check if product with same ID and size exists
       const existingItemIndex = prevCart.findIndex(item => 
         item.id === product.id && item.size === product.size
       );
-
       if (existingItemIndex >= 0) {
         const newCart = [...prevCart];
         newCart[existingItemIndex].quantity += (product.quantity || 1);
@@ -38,7 +40,7 @@ function App() {
         return [...prevCart, { ...product, quantity: product.quantity || 1, cartId: Date.now().toString() }];
       }
     });
-    setIsCartOpen(true); // Open drawer on add
+    setIsCartOpen(true);
   };
 
   const updateQuantity = (cartId, newQuantity) => {
@@ -54,7 +56,6 @@ function App() {
 
   const clearCart = () => setCart([]);
 
-  // Calculate total items in cart (sum of quantities)
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleUserIconClick = () => {
@@ -66,50 +67,61 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="app-container">
+    <div className="app-container">
+      {!isAdmin && (
         <Header 
           cartCount={cartItemsCount} 
           onUserIconClick={handleUserIconClick}
           onCartClick={() => setIsCartOpen(true)}
         />
-        
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/shop" element={<ShopPage cart={cart} addToCart={addToCart} products={products} />} />
-          <Route path="/product/:id" element={<ProductDetailPage cart={cart} addToCart={addToCart} products={products} />} />
-          <Route path="/admin" element={<AdminPage products={products} setProducts={setProducts} />} />
-        </Routes>
-        
-        <Footer onAdminLoginClick={() => setIsAdminAuthModalOpen(true)} />
+      )}
+      
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/shop" element={<ShopPage cart={cart} addToCart={addToCart} />} />
+        <Route path="/product/:id" element={<ProductDetailPage cart={cart} addToCart={addToCart} />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/productos" element={<AdminProducts />} />
+        <Route path="/admin/pedidos" element={<AdminOrders />} />
+        <Route path="/admin/usuarios" element={<AdminUsers />} />
+      </Routes>
 
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
-          onLogin={(userData) => setUser(userData)} 
-        />
+      {!isAdmin && (
+        <Footer onAdminClick={() => setIsAdminLoginOpen(true)} />
+      )}
 
-        <ProfileModal 
-          isOpen={isProfileModalOpen} 
-          onClose={() => setIsProfileModalOpen(false)} 
-          user={user} 
-          onLogout={() => setUser(null)} 
-        />
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onLogin={(userData) => setUser(userData)} 
+      />
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+        user={user} 
+        onLogout={() => setUser(null)} 
+      />
+      <CartDrawer 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+        clearCart={clearCart}
+      />
+      <AdminLogin
+        isOpen={isAdminLoginOpen}
+        onClose={() => setIsAdminLoginOpen(false)}
+      />
+    </div>
+  );
+}
 
-        <CartDrawer 
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          cart={cart}
-          updateQuantity={updateQuantity}
-          removeFromCart={removeFromCart}
-          clearCart={clearCart}
-        />
-
-        <AdminAuthModal 
-          isOpen={isAdminAuthModalOpen} 
-          onClose={() => setIsAdminAuthModalOpen(false)} 
-        />
-      </div>
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

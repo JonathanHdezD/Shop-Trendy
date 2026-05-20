@@ -16,6 +16,9 @@ function Footer({ onAdminLoginClick }) {
     setSupportModalInfo({ title, content });
   };
 
+import { Link } from 'react-router-dom'; //Anexado para el enlace del administrador
+
+function Footer({onAdminClick}) {
   return (
     <>
       <footer className="footer">
@@ -59,27 +62,14 @@ function Footer({ onAdminLoginClick }) {
                 </a>
               </li>
 
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); openSupportModal('Contáctanos', 'Puedes comunicarte con nosotros llamando al +52 (55) 1234-5678 o enviando un correo a hola@shoptrendy.com.'); }}>
-                  Contáctanos
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onAdminLoginClick(); }}>
-                  Ingresar al administrador
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div className="footer-newsletter">
-            <h4 className="footer-title">Suscríbete</h4>
-            <p className="newsletter-text">Recibe las últimas noticias y ofertas exclusivas.</p>
-            <div className="newsletter-form">
-              <input type="email" placeholder="Tu correo electrónico" className="newsletter-input" />
-              <button className="newsletter-btn"><Mail size={18} /></button>
-            </div>
-          </div>
+        <div className="footer-links-group">
+          <h4 className="footer-title">Soporte</h4>
+          <ul className="footer-links">
+            <li><a href="#">Preguntas Frecuentes</a></li>
+            <li><a href="#">Envíos y Devoluciones</a></li>
+            <li><a href="/about">Contáctanos</a></li>
+            <li><a href="#" onClick={(e) => { e.preventDefault(); onAdminClick(); }}>Administrador</a></li>
+          </ul>
         </div>
 
         <div className="footer-bottom">
