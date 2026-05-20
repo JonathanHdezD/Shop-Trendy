@@ -163,7 +163,7 @@ function AdminUsers() {
                 <div style={styles.modalSectionTitle}>Información de Contacto</div>
                 <div style={styles.modalInfoRow}><Mail size={14} color="#e08c00" /> {selectedUser.email}</div>
                 <div style={styles.modalInfoRow}><Phone size={14} color="#e08c00" /> {selectedUser.telefono}</div>
-                <div style={styles.modalSectionTitle} style={{marginTop: '16px'}}>Fecha de Registro</div>
+                <div style={{...styles.modalSectionTitle, marginTop: '16px'}}>Fecha de Registro</div>
                 <div style={styles.modalInfoRow}><Calendar size={14} color="#e08c00" /> {selectedUser.desde}</div>
               </div>
               <div style={styles.modalSection}>
