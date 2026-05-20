@@ -58,6 +58,17 @@ function AdminDashboard() {
           ))}
         </div>
 
+        {/* Alerta Stock Bajo */}
+        <div style={styles.alertBox}>
+          <AlertCircle size={20} color="#e08c00" />
+          <div>
+            <div style={styles.alertTitle}>Productos con Stock Bajo</div>
+            <div style={styles.alertText}>
+              Hay 3 productos con menos de 5 unidades en inventario. Revisa la sección de productos para reponer stock.
+            </div>
+          </div>
+        </div>
+
         {/* Pedidos Recientes & Top Productos */}
         <div style={styles.twoCol}>
           <div style={styles.card}>
@@ -102,17 +113,6 @@ function AdminDashboard() {
                 <div style={styles.productRevenue}>{product.revenue}</div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Alerta Stock Bajo */}
-        <div style={styles.alertBox}>
-          <AlertCircle size={20} color="#e08c00" />
-          <div>
-            <div style={styles.alertTitle}>Productos con Stock Bajo</div>
-            <div style={styles.alertText}>
-              Hay 3 productos con menos de 5 unidades en inventario. Revisa la sección de productos para reponer stock.
-            </div>
           </div>
         </div>
 
@@ -185,6 +185,26 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
+  },
+  alertBox: {
+    background: '#fffbea',
+    border: '1px solid #f5e4a0',
+    borderRadius: '12px',
+    padding: '16px 24px',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '12px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+  },
+  alertTitle: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#e08c00',
+    marginBottom: '4px',
+  },
+  alertText: {
+    fontSize: '13px',
+    color: '#666',
   },
   twoCol: {
     display: 'grid',
@@ -286,25 +306,7 @@ const styles = {
     fontWeight: '600',
     color: '#e08c00',
   },
-  alertBox: {
-    background: '#fffbea',
-    border: '1px solid #f5e4a0',
-    borderRadius: '12px',
-    padding: '16px 24px',
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '12px',
-  },
-  alertTitle: {
-    fontSize: '14px',
-    fontWeight: '600',
-    color: '#e08c00',
-    marginBottom: '4px',
-  },
-  alertText: {
-    fontSize: '13px',
-    color: '#666',
-  },
+  
 };
 
 export default AdminDashboard;
