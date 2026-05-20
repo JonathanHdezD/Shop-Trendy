@@ -8,6 +8,9 @@ import Header from './components/Header';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import CartDrawer from './components/CartDrawer';
+import AdminPage from './pages/AdminPage';
+import AdminAuthModal from './components/AdminAuthModal';
+import { products as initialProducts } from './data/products';
 import './index.css';
 
 function App() {
@@ -16,6 +19,8 @@ function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState(false);
+  const [products, setProducts] = useState(initialProducts);
 
   // Cart Management
   const addToCart = (product) => {
@@ -71,11 +76,12 @@ function App() {
         
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/shop" element={<ShopPage cart={cart} addToCart={addToCart} />} />
-          <Route path="/product/:id" element={<ProductDetailPage cart={cart} addToCart={addToCart} />} />
+          <Route path="/shop" element={<ShopPage cart={cart} addToCart={addToCart} products={products} />} />
+          <Route path="/product/:id" element={<ProductDetailPage cart={cart} addToCart={addToCart} products={products} />} />
+          <Route path="/admin" element={<AdminPage products={products} setProducts={setProducts} />} />
         </Routes>
         
-        <Footer />
+        <Footer onAdminLoginClick={() => setIsAdminAuthModalOpen(true)} />
 
         <AuthModal 
           isOpen={isAuthModalOpen} 
@@ -97,6 +103,11 @@ function App() {
           updateQuantity={updateQuantity}
           removeFromCart={removeFromCart}
           clearCart={clearCart}
+        />
+
+        <AdminAuthModal 
+          isOpen={isAdminAuthModalOpen} 
+          onClose={() => setIsAdminAuthModalOpen(false)} 
         />
       </div>
     </Router>
