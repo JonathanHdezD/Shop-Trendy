@@ -2,23 +2,14 @@ import React, { useState } from 'react';
 import { Instagram, Twitter, Facebook, Mail, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-function Footer({ onAdminLoginClick }) {
+function Footer({ onAdminClick }) {
   const [supportModalInfo, setSupportModalInfo] = useState(null);
   const location = useLocation();
 
-  // Hide storefront footer on the admin dashboard
-  // if (location.pathname === '/admin') {
-  // return null;
-  // }
-
   const openSupportModal = (title, content) => {
-    e => e.preventDefault();
     setSupportModalInfo({ title, content });
   };
 
-import { Link } from 'react-router-dom'; //Anexado para el enlace del administrador
-
-function Footer({onAdminClick}) {
   return (
     <>
       <footer className="footer">
@@ -61,15 +52,14 @@ function Footer({onAdminClick}) {
                   Envíos y Devoluciones
                 </a>
               </li>
-
-        <div className="footer-links-group">
-          <h4 className="footer-title">Soporte</h4>
-          <ul className="footer-links">
-            <li><a href="#">Preguntas Frecuentes</a></li>
-            <li><a href="#">Envíos y Devoluciones</a></li>
-            <li><a href="/about">Contáctanos</a></li>
-            <li><a href="#" onClick={(e) => { e.preventDefault(); onAdminClick(); }}>Administrador</a></li>
-          </ul>
+              <li><Link to="/about">Contáctanos</Link></li>
+              <li>
+                <a href="#" onClick={(e) => { e.preventDefault(); onAdminClick(); }}>
+                  Administrador
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="footer-bottom">
